@@ -19,32 +19,42 @@ class Blog(db.Model):
         self.entry = entry
 
 
-
-@app.route('/blog', methods=['POST', 'GET'])
+@app.route('/blog')
 def blog():
-
-    if request.method == 'POST':
-        title = request.form['title']
-        entry = request.form['entry']
-        new_blog = Blog(title, entry)
-        db.session.add(new_blog)
-        db.session.commit()
-
     blogs = Blog.query.all()
     return render_template('blog.html',title="Build A Blog", blogs=blogs)
 
 
-@app.route('/new-post')
-def newpost():
-    return render_template('newpost.html')
+@app.route('/new-post', methods=['POST', 'GET'])
+def newpost(): 
 
+    title_error = ""
+    entry_error = ""
 
-@app.route('/', methods=['POST', 'GET'])
+    if request.method == 'POST':
+        title = request.form['title']
+        entry = request.form['entry']
+            
+        if title.strip() == "":
+            title_error = "Please fill in the title"
+        
+        if entry.strip() == "":
+            entry_error = "Please fill in the body"
+
+        if title_error == "" and entry_error == "":
+            new_blog = Blog(request.form['title'], request.form['entry'])
+            db.session.add(new_blog)
+            db.session.commit()
+            return redirect('/blog')
+
+        return render_template('newpost.html', title=title, entry=entry, title_error=title_error, entry_error=entry_error)
+
+    return render_template('/newpost.html')
+    
+
+@app.route('/')
 def index():
     return redirect('/blog')
-
-
-
 
 
 if __name__ == '__main__':
