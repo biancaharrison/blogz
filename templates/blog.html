@@ -5,8 +5,9 @@
 
     {% for blog in blogs %}
 
-    <h2><a href='/'>{{blog.title}}</a></h2>
+    <h2><a href='/blog?id={{blog.id}}' id=blog-id>{{blog.title}}</a></h2>
     <p>{{blog.entry}}</p>
+
     <hr />
 
     {% endfor %}
