@@ -52,7 +52,9 @@ def newpost():
             new_blog = Blog(request.form['title'], request.form['entry'])
             db.session.add(new_blog)
             db.session.commit()
-            return redirect('/')
+            #blog_id = db.session.query(new_blog).filter_by(id=)
+            blog_id = new_blog.id
+            return redirect('/blog?id={0}'.format(blog_id))
         
         return render_template('newpost.html', title=title, entry=entry, title_error=title_error, entry_error=entry_error)
     
