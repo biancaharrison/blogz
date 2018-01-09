@@ -6,6 +6,9 @@
             h1 {
                 text-align: center;
             }
+            nav {
+                float: right;
+            }
             .error {
                 color: red;
                 font-style: italic;
@@ -14,9 +17,23 @@
     </head>
 <body>
     <nav>
-        <a href="/blog">Main Blog Page</a>
-        <a href="/new-post">Add a Blog Entry</a>
+        <a href="/login">Login</a>
+        <a href="/logout">Logout</a>
     </nav>
+
+    <div>
+        <a href="/">Home</a>
+        <a href="/blog">All Posts</a>
+        <a href="/new-post">New Post</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        </ul>
+        {% for category,message in messages %}
+            <li class="{{category}}">{{message}}</li>
+        {% endfor %}
+        </ul>
+    {% endwith %}
 
     {% block content %}
     {% endblock %}
