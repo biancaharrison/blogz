@@ -45,13 +45,20 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
+
+        if username.strip() == "":
+            flash("Invalid username", "error")
+        
+        if password.strip() == "":
+            flash("Invalid password", "error")
+
+        if user and user.password != password:
+            flash("Invalid password", "error")            
         if user and user.password == password:
             session['username'] = username
             flash("Logged in")
             return redirect('/new-post')
-        else:
-            flash("User password incorrect, or user does not exist", "error")
-            
+
     return render_template('login.html')
 
 
@@ -62,18 +69,25 @@ def signup():
         password = request.form['password']
         verify = request.form['verify']
 
-        # TODO - validate user's data
+        if len(username.strip()) < 3:
+            flash("That's not a valid username", "error")
 
-        existing_user = User.query.filter_by(username=username).first()
-        if not existing_user:
-            new_user = User(username, password)
-            db.session.add(new_user)
-            db.session.commit()
-            session['username'] = username
-            return redirect('/new-post')            
-        else:
-            # TODO - better user response messaging
-            return '<h1>Duplicate user</h1>'
+        if len(password.strip()) < 3:
+            flash("That's not a valid passowrd", "error")
+
+        if password != verify:
+            flash("Passwords do not match", "error")
+
+        if len(username.strip()) >= 3 and len(password.strip()) >= 3 and password == verify:
+            existing_user = User.query.filter_by(username=username).first()
+            if not existing_user:
+                new_user = User(username, password)
+                db.session.add(new_user)
+                db.session.commit()
+                session['username'] = username
+                return redirect('/new-post')          
+            else:
+                flash("Username already exists", "error")
     return render_template('signup.html')
 
 @app.route('/logout')
